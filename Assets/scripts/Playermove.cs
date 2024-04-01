@@ -32,7 +32,12 @@ public class MovePlayer : MonoBehaviour
         if (direction.x != 0)
         {
             anim.SetBool("Running", true);
-            sprite.flipX = direction.x < 0;
+            Vector3 newScale = this.transform.localScale;
+            if(direction.x>0)
+                newScale.x = 0.8f;
+            else
+                newScale.x = -0.8f;
+            this.transform.localScale = newScale;
         }
         else if (direction.y != 0)
         {
