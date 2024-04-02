@@ -12,6 +12,8 @@ public class EnemyFireballThrower : MonoBehaviour
     private float throwTimer = 0f;
     Vector3 direction;
     public Animator animator;
+    RaycastHit2D hit;
+    public float moveSpeed=0.5f;
 
     void Start()
     {
@@ -32,25 +34,31 @@ public class EnemyFireballThrower : MonoBehaviour
         else
             newScale.x = -0.8f;
         this.transform.localScale = newScale;
-
+        
         if (throwTimer >= throwInterval)
         {
-            animator.SetTrigger("fire");
-            // Reset the timer
-            throwTimer = 0f;
+             if(Physics2D.Linecast(transform.position,playerTransform.position)){
+                hit=Physics2D.Linecast(transform.position,playerTransform.position);
+                if(hit.collider.gameObject.tag=="Player"){
 
-            // Instantiate fireball prefab
-            GameObject fireball = Instantiate(fireballPrefab, transform.position, Quaternion.identity);
+                    animator.SetTrigger("fire");
+                    // Reset the timer
+                    throwTimer = 0f;
 
-            // Apply force to the fireball
-            fireball.GetComponent<Rigidbody2D>().velocity = direction * throwForce;
+                    // Instantiate fireball prefab
+                    GameObject fireball = Instantiate(fireballPrefab, transform.position, Quaternion.identity);
 
-             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            fireball.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                    // Apply force to the fireball
+                    fireball.GetComponent<Rigidbody2D>().velocity = direction * throwForce;
 
-            Destroy(fireball, fireballLifetime);
+                        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                    fireball.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
-            throwInterval=2+Random.Range(-1,1);
+                    Destroy(fireball, fireballLifetime);
+
+                    throwInterval=2+Random.Range(-1,1);
+                }
+             }
         }
     }
 }
